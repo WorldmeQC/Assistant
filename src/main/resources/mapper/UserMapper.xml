@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace根据自己需要创建的的mapper的路径和名称填写-->
+<mapper namespace="org.worldme.assistant.mapper.UserMapper">
+    <sql id="Standard_Fields_1">
+        state,created_time,created_user,updated_time,updated_user
+    </sql>
+    <sql id="Standard_Fields_1_TimeFormat">
+        state,DATE_FORMAT(created_time, '%Y-%m-%d %H:%i:%s') as created_time,created_user,DATE_FORMAT(updated_time, '%Y-%m-%d %H:%i:%s') as updated_time,updated_user
+    </sql>
+    <sql id="Standard_Fields_2">
+        #{state},#{created_time},#{created_user},#{updated_time},#{updated_user}
+    </sql>
+    <sql id="Standard_Fields_3">
+        state=#{state},created_time=#{created_time},created_user=#{created_user},updated_time=#{updated_time},updated_user=#{updated_user}
+    </sql>
+    
+    <select id="getData" parameterType="Map" resultType="Map">
+        SELECT
+            user_id, user_name, user_password, user_salt,
+            <include refid="Standard_Fields_1_TimeFormat"/>
+        FROM
+            t_user
+        <where>
+            <if test="user_id != null and user_id != ''">user_id = #{user_id}</if>
+            <if test="user_name != null and user_name != ''">OR user_name = #{user_name}</if>
+        </where>
+    </select>
+
+    <select id="getDetail" parameterType="Map" resultType="Map">
+        SELECT
+            user_id, user_profile_photo, user_nickname,
+            user_gender, user_birthday, user_email,
+            user_phone, user_level, user_xp, user_coin,
+            <include refid="Standard_Fields_1_TimeFormat"/>
+        FROM
+            t_user_info
+        where
+            user_id = #{user_id}
+    </select>
+    
+    <insert id="addData" parameterType="Map" useGeneratedKeys="true" keyProperty="userId">
+        INSERT INTO t_user(
+            user_id, user_name, user_password, user_salt,
+            <include refid="Standard_Fields_1"/>
+        )
+        VALUES (
+            #{user_id}, #{user_name}, #{user_password}, #{user_salt},
+            <include refid="Standard_Fields_2"/>
+        )
+    </insert>
+
+    <insert id="addDetail" parameterType="Map">
+        INSERT INTO t_user_info(
+            user_id, user_profile_photo, user_nickname,
+            user_gender, user_birthday, user_email,
+            user_phone, user_level, user_xp, user_coin,
+            <include refid="Standard_Fields_1"/>
+        )
+        VALUES (
+            #{user_id}, #{user_profile_photo}, #{user_nickname},
+            #{user_gender}, #{user_birthday}, #{user_email},
+            #{user_phone}, #{user_level}, #{user_xp}, #{user_coin},
+            <include refid="Standard_Fields_2"/>
+        )
+    </insert>
+    
+    
+
+</mapper>
