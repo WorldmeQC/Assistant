@@ -39,6 +39,7 @@ public class LoginInterceptor implements HandlerInterceptor {
             body.put("profile",jedis.get(token));
             requestWrapper.setBodyJsonStr(JsonTools.object2json(body));
         }
+        jedis.close();
         return true;
     }
 
