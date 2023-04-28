@@ -28,6 +28,7 @@ public class RedisTool {
         port = Integer.parseInt(properties.getProperty("spring.data.redis.port"));
         password = properties.getProperty("spring.data.redis.password");
         timeout = Integer.parseInt(properties.getProperty("spring.data.redis.timeout"));
+        JedisPoolConfig config = new JedisPoolConfig();
         pool = new JedisPool(new JedisPoolConfig(), host, port, timeout, password);
     }
 

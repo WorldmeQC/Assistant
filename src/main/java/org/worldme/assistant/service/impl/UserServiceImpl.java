@@ -3,6 +3,7 @@ package org.worldme.assistant.service.impl;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.DigestUtils;
 import org.worldme.assistant.mapper.UserMapper;
 import org.worldme.assistant.service.IUserService;
@@ -58,6 +59,7 @@ public class UserServiceImpl implements IUserService {
                 throw new Exception("未知的数据库异常");
             Map<String, Object> info = new HashMap<>();
             info.put("user_id", parameters.get("user_id"));
+            info.put("user_nickname","用户" + info.get("user_id"));
             info.put("user_level", 1);
             info.put("user_xp", 0);
             info.put("user_coin", 0L);
@@ -69,12 +71,20 @@ public class UserServiceImpl implements IUserService {
             info.put("updated_user", parameters.get("user_name"));
             if (userMapper.addDetail(info) == 0)
                 throw new Exception("未知的数据库异常");
+            data = userMapper.getDetail(info);
+            // 生成一个token
+            String token = "ey"+UUID.randomUUID().toString().toLowerCase().replaceAll("-","");
+            // 将token作为key，将用户信息转换为json放入redis
+            Jedis jedis = RedisTool.getResource();
+            jedis.set(token, JsonTools.object2json(data));
+            // 给缓存中的数据设置一个存活的时间  (这个时间一般都是一个范围,防止缓存雪崩)
+            jedis.expire(token,60 * 30 + (new Random().nextInt(60 * 10)));
+            data.put("token",token);
+            jedis.close();
             success = true;
-            data = userMapper.getData(parameters);
-            data.keySet().removeIf(key -> key == "user_password");
-            data.keySet().removeIf(key -> key == "user_salt");
         } catch (Exception e) {
             message = ResultUtil.handleException(e);
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
         return ResultUtil.formatResult(success, message, data);
     }
@@ -102,6 +112,7 @@ public class UserServiceImpl implements IUserService {
             // 给缓存中的数据设置一个存活的时间  (这个时间一般都是一个范围,防止缓存雪崩)
             jedis.expire(token,60 * 30 + (new Random().nextInt(60 * 10)));
             data.put("token",token);
+            jedis.close();
             success = true;
         } catch (Exception e) {
             message = ResultUtil.handleException(e);

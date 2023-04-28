@@ -39,7 +39,7 @@
             user_id = #{user_id}
     </select>
     
-    <insert id="addData" parameterType="Map" useGeneratedKeys="true" keyProperty="userId">
+    <insert id="addData" parameterType="Map" useGeneratedKeys="true" keyProperty="user_id">
         INSERT INTO t_user(
             user_id, user_name, user_password, user_salt,
             <include refid="Standard_Fields_1"/>
