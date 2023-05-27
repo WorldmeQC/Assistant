@@ -1,10 +1,7 @@
 package org.worldme.assistant.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.worldme.assistant.service.IUserService;
 import org.worldme.assistant.util.JsonResult;
 
@@ -17,26 +14,6 @@ import java.util.Map;
 public class UserController {
     @Autowired
     private IUserService userService;
-    /*
-    //@ResponseBody  表示此方法的响应结果以json格式进行数据响应
-    @RequestMapping("register")
-    public JsonResult<Void> register(User user) {
-        //创建响应结果对象
-        JsonResult<Void> result = new JsonResult<>();
-        try {
-            userService.register(user);
-            result.setState(200);
-            result.setMessage("用户注册成功");
-        } catch (UsernameDepulitedException e) {
-            result.setState(4000);
-            result.setMessage("用户名被占用");
-        } catch (InsertException e) {
-            result.setState(5000);
-            result.setMessage("注册时产生未知异常");
-        }
-        return result;
-    }
-    */
 
     @PostMapping("register")
     public JsonResult register(@RequestBody Map<String, Object> parameters) throws Exception {
@@ -48,4 +25,13 @@ public class UserController {
         return userService.login(parameters);
     }
 
+    @PostMapping("update")
+    public JsonResult update(@RequestBody Map<String, Object> parameters) throws Exception {
+        return userService.update(parameters);
+    }
+
+    @PostMapping("getInfo")
+    public JsonResult getInfo(@RequestHeader("token") String token) throws Exception {
+        return userService.getUserInfo(token);
+    }
 }

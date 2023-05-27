@@ -1,7 +1,10 @@
 package org.worldme.assistant.mapper;
 
-
-/* 用户模块的持久层 */
+/**
+ * @Author WorldmeQC
+ * @Time 2023/4/15 10:21
+ * 用户模块的持久层
+ **/
 
 import java.util.Map;
 
@@ -14,8 +17,14 @@ public interface UserMapper {
     Integer addDetail(Map<String, Object> parameters);
 
     // 查询单个用户
-    Map getData(Map<String, Object> parameters);
+    Map<String, Object> getData(Map<String, Object> parameters);
 
     // 查询单个用户信息
-    Map getDetail(Map<String, Object> parameters);
+    Map<String, Object> getDetail(Map<String, Object> parameters);
+
+    // 修改用户密码
+    Integer updateData(Map<String, Object> parameters);
+
+    // 修改用户信息
+    Integer updateDetail(Map<String, Object> parameters);
 }

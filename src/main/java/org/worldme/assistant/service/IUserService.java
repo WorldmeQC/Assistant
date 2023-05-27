@@ -13,4 +13,8 @@ public interface IUserService {
     JsonResult register(Map<String, Object> parameters) throws Exception;
 
     JsonResult login(Map<String, Object> parameters) throws Exception;
+
+    JsonResult update(Map<String, Object> parameters) throws Exception;
+
+    JsonResult getUserInfo(String token) throws Exception;
 }
