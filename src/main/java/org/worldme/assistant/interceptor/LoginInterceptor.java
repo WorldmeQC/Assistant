@@ -37,6 +37,7 @@ public class LoginInterceptor implements HandlerInterceptor {
         Map<String,Object> body = JsonTools.json2object(requestWrapper.getBodyJsonStr(), Map.class);
         if (jedis.exists(token)) {
             body.put("profile",jedis.get(token));
+            body.put("token",token);
             requestWrapper.setBodyJsonStr(JsonTools.object2json(body));
         }
         jedis.close();
